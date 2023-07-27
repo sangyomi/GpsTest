@@ -11,7 +11,7 @@ int main()
     serial_port port(io);
 
     // 시리얼 포트 설정
-    port.open("/dev/ttyUSB0");
+    port.open("/dev/ttyUSB1");
     port.set_option(serial_port_base::baud_rate(38400));
     port.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
     port.set_option(serial_port_base::parity(serial_port_base::parity::none));
@@ -29,7 +29,7 @@ int main()
         string data;
         getline(is, data);
 
-        if (data.substr(1, 5) == datName)
+        if (data.length() >= 6 && data.substr(1, 5) == datName) // Check if data has at least 6 characters
         {
             size_t pos1 = data.find(",");
             size_t pos2 = data.find(",", pos1 + 1);
@@ -49,7 +49,12 @@ int main()
                 cout << "data invalid" << endl;
             }
         }
+        else
+        {
+            cout << "data invalid" << endl;
+        }
     }
+
 
     return 0;
 }
