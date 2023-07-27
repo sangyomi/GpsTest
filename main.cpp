@@ -1,60 +1,49 @@
 #include <iostream>
+#include <fstream>
 #include <string>
-#include <boost/asio.hpp>
+#include <sstream>
 
-using namespace std;
-using namespace boost::asio;
+std::pair<double, double> GPSabsorption(std::ifstream& ser) {
+    std::string data;
+    std::getline(ser, data);
+    std::istringstream iss(data);
+    std::string datName = "GNGLL";
+    std::pair<double, double> gps_data = { 0.0, 0.0 };
 
-int main()
-{
-    io_service io;
-    serial_port port(io);
+    if (data.substr(1, 5) == datName) {
+        std::string ignored;
+        double data2, data3;
+        std::getline(iss, ignored, ',');
+        iss >> data2;
+        std::getline(iss, ignored, ',');
+        std::getline(iss, ignored, ',');
+        iss >> data3;
+        gps_data = { data2, data3 };
+    }
+    return gps_data;
+}
 
-    // 시리얼 포트 설정
-    port.open("/dev/ttyUSB1");
-    port.set_option(serial_port_base::baud_rate(38400));
-    port.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
-    port.set_option(serial_port_base::parity(serial_port_base::parity::none));
-    port.set_option(serial_port_base::stop_bits(serial_port_base::stop_bits::one));
-    port.set_option(serial_port_base::character_size(8));
+int main() {
+    std::ifstream ser("/dev/ttyUSB1");
+    ser.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-    string datName = "GNGLL";
-
-    while (true)
-    {
-        boost::asio::streambuf buffer;
-        read_until(port, buffer, '\n'); // Read data until a newline character is encountered
-
-        istream is(&buffer);
-        string data;
-        getline(is, data);
-
-        if (data.length() >= 6 && data.substr(1, 5) == datName) // Check if data has at least 6 characters
-        {
-            size_t pos1 = data.find(",");
-            size_t pos2 = data.find(",", pos1 + 1);
-            if (pos1 != string::npos && pos2 != string::npos)
-            {
-                float data2 = stof(data.substr(pos1 + 1, pos2 - pos1 - 1));
-                float data3 = stof(data.substr(pos2 + 1));
-
-                cout << "gps on" << endl;
-                float x = data2 * 0.01;
-                float y = data3 * 0.01;
-                cout << "x: " << x << endl;
-                cout << "y: " << y << endl;
+    while (true) {
+        int GPS_S = 0;
+        while (GPS_S == 0) {
+            std::pair<double, double> gps_data = GPSabsorption(ser);
+            if (gps_data.first != 0.0 || gps_data.second != 0.0) {
+                std::cout << "gps on" << std::endl;
+                double x = gps_data.first * 0.01;
+                double y = gps_data.second * 0.01;
+                std::cout << x << std::endl;
+                std::cout << y << std::endl;
+                GPS_S = 1;
+            } else {
+                GPS_S = 0;
             }
-            else
-            {
-                cout << "data invalid" << endl;
-            }
-        }
-        else
-        {
-            cout << "data invalid" << endl;
         }
     }
 
-
     return 0;
 }
+
