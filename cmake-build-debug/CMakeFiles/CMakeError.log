@@ -1,0 +1,61 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0PU5OK
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_fdeb0/fast && /usr/bin/make  -f CMakeFiles/cmTC_fdeb0.dir/build.make CMakeFiles/cmTC_fdeb0.dir/build
+make[1]: Entering directory '/home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0PU5OK'
+Building C object CMakeFiles/cmTC_fdeb0.dir/src.c.o
+/usr/bin/gcc -DCMAKE_HAVE_LIBC_PTHREAD  -fdiagnostics-color=always -o CMakeFiles/cmTC_fdeb0.dir/src.c.o -c /home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0PU5OK/src.c
+Linking C executable cmTC_fdeb0
+/snap/clion/246/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fdeb0.dir/link.txt --verbose=1
+/usr/bin/gcc CMakeFiles/cmTC_fdeb0.dir/src.c.o -o cmTC_fdeb0 
+/usr/bin/ld: CMakeFiles/cmTC_fdeb0.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x5e): undefined reference to `pthread_cancel'
+/usr/bin/ld: src.c:(.text+0x6f): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_fdeb0.dir/build.make:99: cmTC_fdeb0] Error 1
+make[1]: Leaving directory '/home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-0PU5OK'
+make: *** [Makefile:127: cmTC_fdeb0/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-aY1l9K
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_f3efc/fast && /usr/bin/make  -f CMakeFiles/cmTC_f3efc.dir/build.make CMakeFiles/cmTC_f3efc.dir/build
+make[1]: Entering directory '/home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-aY1l9K'
+Building C object CMakeFiles/cmTC_f3efc.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create -fdiagnostics-color=always -o CMakeFiles/cmTC_f3efc.dir/CheckFunctionExists.c.o -c /home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-aY1l9K/CheckFunctionExists.c
+Linking C executable cmTC_f3efc
+/snap/clion/246/bin/cmake/linux/x64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f3efc.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_f3efc.dir/CheckFunctionExists.c.o -o cmTC_f3efc  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_f3efc.dir/build.make:99: cmTC_f3efc] Error 1
+make[1]: Leaving directory '/home/sangjun/untitled/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-aY1l9K'
+make: *** [Makefile:127: cmTC_f3efc/fast] Error 2
+
+
+
